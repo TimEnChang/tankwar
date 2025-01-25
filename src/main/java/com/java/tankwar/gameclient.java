@@ -9,11 +9,25 @@ import java.util.Arrays;
 import java.util.List;
 
 public class gameclient extends JComponent {
+
+    private static final gameclient INSTANCE = new gameclient();
+
+    public static gameclient getInstance(){
+        return  INSTANCE;
+    };
     private Tank playerTank;
 
     private List<Tank> enemyTanks;
 
+    public List<Tank> getEnemyTanks() {
+        return enemyTanks;
+    }
+
     private List<Wall> Walls;
+
+    public List<Wall> getWalls() {
+        return Walls;
+    }
 
     public gameclient() {
         this.enemyTanks = enemyTanks;

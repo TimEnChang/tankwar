@@ -10,18 +10,6 @@ public class Tank {
     private boolean stopped;
     private final boolean enemy;
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getY() {
-        return y;
-    }
-
     public int getX() {
         return x;
     }
@@ -91,9 +79,41 @@ public class Tank {
     }
 
     void draw(Graphics g){
+        int oldX =x, oldY = y;
         this.determineDirection();
         this.move();
+
+        if(x<0) x=0;
+        else if(x>800-getImage().getWidth(null)) x=800 - getImage().getWidth(null);
+        if(y<0) y=0;
+        else if(y>600-getImage().getHeight(null)) y=600 - getImage().getHeight(null);
+
+
+        Rectangle rec = this.getRectangle();
+        for(Wall wall:gameclient.getInstance().getWalls()){
+            if(rec.intersects(wall.getRectangle())){
+                x= oldX;
+                y= oldY;
+                break;
+            }
+        }
+
+        for(Tank tank:gameclient.getInstance().getEnemyTanks()){
+            if(rec.intersects(tank.getRectangle())){
+                x = oldX;
+                y = oldY;
+                break;
+
+            }
+
+        }
+
         g.drawImage(getImage(), x, y, null);
+
+    }
+
+    public Rectangle getRectangle() {
+        return new Rectangle(x, y, getImage().getWidth(null), getImage().getHeight(null));
     }
 
     private boolean up, down, left, right;
