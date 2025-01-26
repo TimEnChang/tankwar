@@ -29,10 +29,17 @@ public class gameclient extends JComponent {
         return Walls;
     }
 
+    private List<Missile> missiles;
+
+    public List<Missile> getMissiles() {
+        return missiles;
+    }
+
     public gameclient() {
         this.enemyTanks = enemyTanks;
         this.playerTank = new Tank(375,20,false,Direction.Down);
         this.enemyTanks = new ArrayList<>(12);
+        this.missiles = new ArrayList<>();
         this.Walls = Arrays.asList(
                 new Wall(200,60,true,15),
                 new Wall(200,510,true,15),
@@ -59,6 +66,9 @@ public class gameclient extends JComponent {
        for(Wall wall:Walls){
            wall.draw(g);
        }
+       for(Missile missile:missiles){
+           missile.draw(g);
+       }
 
 }
 
@@ -67,7 +77,7 @@ public class gameclient extends JComponent {
     frame.setTitle("坦克大戰");
     frame.setIconImage(new ImageIcon("/Users/zhangtingen/Downloads/tankwar/assets/images/icon.png").getImage());
     System.setProperty("sun.java2d.uiScale", "1.0");
-    gameclient client = new gameclient();
+    final gameclient client = new gameclient().getInstance();
     client.repaint();
     frame.add(client);
     frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
