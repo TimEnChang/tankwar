@@ -24,37 +24,9 @@ class Missile {
 
     void move(){
 
-        switch (direction) {
-            case Up:
-                y -= SPEED;
-                break;
-            case Down:
-                y += SPEED;
-                break;
-            case Left:
-                x -= SPEED;
-                break;
-            case Right:
-                x += SPEED;
-                break;
-            case UPLEFT:
-                y -= SPEED;
-                x -= SPEED;
-                break;
-            case UPRIGHT:
-                y -= SPEED;
-                x += SPEED;
-                break;
-            case DOWNLEFT:
-                x -= SPEED;
-                y += SPEED;
-                break;
-            case DOWNRIGHT:
-                x += SPEED;
-                y += SPEED;
-                break;
+        x = direction.xFactor *SPEED;
+        y = direction.yFactor *SPEED;
 
-        }
     }
 
     public void draw(Graphics g) {

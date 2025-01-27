@@ -13,6 +13,7 @@ public class Tank {
     private int y;
     private boolean stopped;
     private final boolean enemy;
+    int movespeed = 5;
 
     public int getX() {
         return x;
@@ -32,37 +33,9 @@ public class Tank {
 
     void move() {
         if (this.stopped) return;
-        switch (direction) {
-            case Up:
-                y -= 5;
-                break;
-            case Down:
-                y += 5;
-                break;
-            case Left:
-                x -= 5;
-                break;
-            case Right:
-                x += 5;
-                break;
-            case UPLEFT:
-                y -= 5;
-                x -= 5;
-            break;
-            case UPRIGHT:
-                y -= 5;
-                x += 5;
-            break;
-            case DOWNLEFT:
-                x -= 5;
-                y += 5;
-            break;
-            case DOWNRIGHT:
-                x += 5;
-                y += 5;
-            break;
+        x += movespeed* direction.xFactor;
+        y += movespeed* direction.yFactor;
 
-        }
     }
 
     Image getImage(){
