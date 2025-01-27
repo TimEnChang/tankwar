@@ -1,8 +1,12 @@
 package com.java.tankwar;
 
+import javax.print.attribute.standard.Media;
+import javax.print.attribute.standard.MediaPrintableArea;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.BufferedInputStream;
+import java.io.File;
 
 public class Tank {
     private int x;
@@ -63,19 +67,9 @@ public class Tank {
 
     Image getImage(){
         String prefix = enemy ? "e": "";
-        switch (direction){
+        return direction.getImage(prefix+"tank");
 
-            case Up: return new ImageIcon("assets/images/"+ prefix+"tankU.gif").getImage();
-            case Down: return new ImageIcon("assets/images/"+prefix+"tankD.gif").getImage();
-            case Left: return new ImageIcon("assets/images/"+prefix+"tankL.gif").getImage();
-            case Right: return new ImageIcon("assets/images/"+prefix+"tankR.gif").getImage();
-            case UPLEFT: return new ImageIcon("assets/images/"+prefix+"tankLU.gif").getImage();
-            case UPRIGHT: return new ImageIcon("assets/images/"+prefix+"tankRU.gif").getImage();
-            case DOWNLEFT: return new ImageIcon("assets/images/"+prefix+"tankLD.gif").getImage();
-            case DOWNRIGHT: return new ImageIcon("assets/images/"+prefix+"tankRD.gif").getImage();
 
-        }
-    return null;
     }
 
     void draw(Graphics g){
@@ -126,6 +120,7 @@ public class Tank {
         case KeyEvent.VK_LEFT: left = true; break;
         case KeyEvent.VK_RIGHT: right = true; break;
         case KeyEvent.VK_SPACE:fire(); break;
+        case KeyEvent.VK_A:superfire(); break;
 
     }
 
@@ -136,9 +131,21 @@ public class Tank {
         Missile missile = new Missile(x+getImage().getWidth(null)/2 -6,
                 y+getImage().getHeight(null)/2-6,enemy, direction);
 
+
+
         gameclient.getInstance().getMissiles().add(missile);
 
     }
+
+    private void superfire(){
+        for(Direction direction:Direction.values() ){
+        Missile missile = new Missile(x+getImage().getWidth(null)/2 -6,
+                y+getImage().getHeight(null)/2-6,enemy, direction);
+
+        gameclient.getInstance().getMissiles().add(missile);}
+
+    }
+
     private void determineDirection(){
         if (!up&&!left&&!right&&!down) {this.stopped = true;}
         else {

@@ -19,19 +19,7 @@ class Missile {
 
     Image getImage(){
         String prefix = enemy ? "e": "";
-        switch (direction){
-
-            case Up: return tools.getImage("missileU.gif");
-            case Down: return tools.getImage("missileD.gif");
-            case Left: return tools.getImage("missileL.gif");
-            case Right: return  tools.getImage("missileR.gif");
-            case UPLEFT: return tools.getImage("missileLU.gif");
-            case UPRIGHT: return tools.getImage("missileRU.gif");
-            case DOWNLEFT:return tools.getImage("missileLD.gif");
-            case DOWNRIGHT: return tools.getImage("missileRD.gif");
-
-        }
-        return null;
+        return direction.getImage("missile");
     }
 
     void move(){
