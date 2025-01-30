@@ -14,8 +14,9 @@ public class gameclient extends JComponent {
 
     public static gameclient getInstance(){
         return  INSTANCE;
-    };
-    private Tank playerTank;
+    }
+
+    private final Tank playerTank;
 
     private List<Tank> enemyTanks;
 
@@ -23,13 +24,24 @@ public class gameclient extends JComponent {
         return enemyTanks;
     }
 
-    private List<Wall> Walls;
+    private final List<Wall> Walls;
 
     public List<Wall> getWalls() {
         return Walls;
     }
 
-    private List<Missile> missiles;
+    private  List<Missile> missiles;
+
+    synchronized void add(Missile missile){
+       missiles.add(missile);}
+
+    void removeMissile(Missile missile){
+      missiles.remove(missile);
+    }
+
+    public Tank getPlayerTank() {
+        return playerTank;
+    }
 
     public List<Missile> getMissiles() {
         return missiles;
@@ -56,55 +68,60 @@ public class gameclient extends JComponent {
         this.setPreferredSize(new Dimension(800, 600));
 
     }
-@Override protected void paintComponent(Graphics g) {
+    @Override protected void paintComponent(Graphics g) {
         g.setColor(Color.black);
         g.fillRect(0, 0, 800, 600);
-       playerTank.draw(g);
-       for(Tank tank:enemyTanks){
-           tank.draw(g);
-       }
-       for(Wall wall:Walls){
-           wall.draw(g);
-       }
-       for(Missile missile:missiles){
-           missile.draw(g);
-       }
+        playerTank.draw(g);
 
-}
+        enemyTanks.removeIf(t->!t.isLive());
+        for(Tank tank:enemyTanks){
+            tank.draw(g);
+        }
+        for(Wall wall:Walls){
+            wall.draw(g);
+        }
+        missiles.removeIf(m->!m.isLive());
+        for(Missile missile:missiles){
+            missile.draw(g);
+        }
+
+    }
+
+
 
     public static void main(String[] args) {
 
-    JFrame frame = new JFrame();
-    frame.setTitle("坦克大戰");
-    frame.setIconImage(new ImageIcon("/Users/zhangtingen/Downloads/tankwar/assets/images/icon.png").getImage());
-    System.setProperty("sun.java2d.uiScale", "1.0");
-    final gameclient client = new gameclient().getInstance();
-    client.repaint();
-    frame.add(client);
-    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-    frame.pack();
-
-    frame.addKeyListener(new KeyAdapter() {
-        @Override public void keyPressed(KeyEvent e){
-           client.playerTank.KeyPressed(e);
-
-
-        }
-        @Override public void keyReleased(KeyEvent e){
-            client.playerTank.keyReleased(e);
-        }
-
-
-    });
-    frame.setLocationRelativeTo(null);
-    frame.setVisible(true);
-    while(true){
+        JFrame frame = new JFrame();
+        frame.setTitle("坦克大戰");
+        frame.setIconImage(new ImageIcon("/Users/zhangtingen/Downloads/tankwar/assets/images/icon.png").getImage());
+        System.setProperty("sun.java2d.uiScale", "1.0");
+        new gameclient();
+        final gameclient client = getInstance();
         client.repaint();
-        try{
-            Thread.sleep(50);
-        }catch(Exception e){
-            e.printStackTrace();
+        frame.add(client);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.pack();
+        frame.addKeyListener(new KeyAdapter() {
+            @Override public void keyPressed(KeyEvent e){
+                client.playerTank.KeyPressed(e);
+
+
+            }
+            @Override public void keyReleased(KeyEvent e){
+                client.playerTank.keyReleased(e);
+            }
+
+
+        });
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        while(true){
+            client.repaint();
+            try{
+                Thread.sleep(50);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
-    }
     }
 }

@@ -13,6 +13,31 @@ public class Tank {
     private int y;
     private boolean stopped;
     private final boolean enemy;
+
+    private boolean live=true;
+
+    private int hp = 100;
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public boolean isLive() {
+        return live;
+    }
+
+    public void setLive(boolean live) {
+        this.live = live;
+    }
+
+    public boolean isEnemy() {
+        return enemy;
+    }
+
     int movespeed = 5;
 
     public int getX() {
@@ -46,6 +71,8 @@ public class Tank {
     }
 
     void draw(Graphics g){
+
+
         int oldX =x, oldY = y;
         this.determineDirection();
         this.move();
@@ -87,24 +114,21 @@ public class Tank {
 
 
     public void KeyPressed(KeyEvent e) {
-    switch (e.getKeyCode()) {
-        case KeyEvent.VK_UP: up = true; break;
-        case KeyEvent.VK_DOWN: down = true; break;
-        case KeyEvent.VK_LEFT: left = true; break;
-        case KeyEvent.VK_RIGHT: right = true; break;
-        case KeyEvent.VK_SPACE:fire(); break;
-        case KeyEvent.VK_A:superfire(); break;
-
-    }
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP: up = true; break;
+            case KeyEvent.VK_DOWN: down = true; break;
+            case KeyEvent.VK_LEFT: left = true; break;
+            case KeyEvent.VK_RIGHT: right = true; break;
+            case KeyEvent.VK_SPACE:fire(); break;
+            case KeyEvent.VK_A:superfire(); break;
 
         }
 
+    }
 
     private void fire(){
         Missile missile = new Missile(x+getImage().getWidth(null)/2 -6,
                 y+getImage().getHeight(null)/2-6,enemy, direction);
-
-
 
         gameclient.getInstance().getMissiles().add(missile);
 
@@ -112,10 +136,10 @@ public class Tank {
 
     private void superfire(){
         for(Direction direction:Direction.values() ){
-        Missile missile = new Missile(x+getImage().getWidth(null)/2 -6,
-                y+getImage().getHeight(null)/2-6,enemy, direction);
+            Missile missile = new Missile(x+getImage().getWidth(null)/2 -6,
+                    y+getImage().getHeight(null)/2-6,enemy, direction);
 
-        gameclient.getInstance().getMissiles().add(missile);}
+            gameclient.getInstance().getMissiles().add(missile);}
 
     }
 
@@ -133,7 +157,7 @@ public class Tank {
 
             this.stopped = false;
         }
-        }
+    }
 
 
     public void keyReleased(KeyEvent e) {
