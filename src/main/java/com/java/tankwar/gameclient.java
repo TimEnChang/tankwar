@@ -32,6 +32,12 @@ public class gameclient extends JComponent {
 
     private  List<Missile> missiles;
 
+    private List<Explosion> explosions;
+
+    void addExplosion(Explosion explosion){
+        explosions.add(explosion);
+    }
+
     synchronized void add(Missile missile){
        missiles.add(missile);}
 
@@ -50,30 +56,41 @@ public class gameclient extends JComponent {
     public gameclient() {
         this.enemyTanks = enemyTanks;
         this.playerTank = new Tank(375,20,false,Direction.Down);
-        this.enemyTanks = new ArrayList<>(12);
+
         this.missiles = new ArrayList<>();
+        this.explosions = new ArrayList<>();
         this.Walls = Arrays.asList(
-                new Wall(200,60,true,15),
+                new Wall(200,120,true,15),
                 new Wall(200,510,true,15),
                 new Wall(80,80,false,15),
                 new Wall(690,80,false,15)
         );
-        for(int i = 0; i < 3; i++){
-            for(int j = 0; j < 4; j++){
-                this.enemyTanks.add( new Tank(320+60*i,200+40*j,true,Direction.Up));
-            }
-        }
+
+        this.initEnemyTanks();
 
 
         this.setPreferredSize(new Dimension(800, 600));
 
     }
+
+    private void initEnemyTanks() {
+        this.enemyTanks = new ArrayList<>(12);
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 4; j++){
+                this.enemyTanks.add( new Tank(320+60*i,200+40*j,true,Direction.Up));
+            }
+        }
+    }
+
     @Override protected void paintComponent(Graphics g) {
         g.setColor(Color.black);
         g.fillRect(0, 0, 800, 600);
         playerTank.draw(g);
 
         enemyTanks.removeIf(t->!t.isLive());
+        if(enemyTanks.isEmpty()){
+            this.initEnemyTanks();
+        }
         for(Tank tank:enemyTanks){
             tank.draw(g);
         }
@@ -85,9 +102,12 @@ public class gameclient extends JComponent {
             missile.draw(g);
         }
 
+        explosions.removeIf(e->!e.isLive());
+        for(Explosion explosion:explosions){
+            explosion.draw(g);
+        }
+
     }
-
-
 
     public static void main(String[] args) {
 
