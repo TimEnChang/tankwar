@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.awt.Font.BOLD;
 import static java.awt.font.TextAttribute.FONT;
@@ -29,6 +30,8 @@ public class gameclient extends JComponent {
     }
 
     private final List<Wall> Walls;
+
+    private final AtomicInteger enemykilled = new AtomicInteger(0);
 
     public List<Wall> getWalls() {
         return Walls;
@@ -64,10 +67,10 @@ public class gameclient extends JComponent {
         this.missiles = new CopyOnWriteArrayList<>();
         this.explosions = new ArrayList<>();
         this.Walls = Arrays.asList(
-                new Wall(200,120,true,15),
-                new Wall(200,510,true,15),
-                new Wall(80,80,false,15),
-                new Wall(690,80,false,15)
+                new Wall(200,80,true,15),
+                new Wall(200,460,true,15),
+                new Wall(100,100,false,12),
+                new Wall(700,100,false,12)
         );
 
         this.initEnemyTanks();
@@ -78,7 +81,7 @@ public class gameclient extends JComponent {
     }
 
     private void initEnemyTanks() {
-        this.enemyTanks = new ArrayList<>(12);
+        this.enemyTanks = new CopyOnWriteArrayList<>();
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 4; j++){
                 this.enemyTanks.add( new Tank(320+60*i,200+40*j,true,Direction.Up));
@@ -96,9 +99,21 @@ public class gameclient extends JComponent {
             g.setFont(new Font(null,Font.BOLD,60));
             g.drawString("Press ENTER to restart",60,400);
         }else{
+            g.setColor(Color.WHITE);
+            g.setFont(new Font(null,Font.BOLD,15));
+            g.drawString("Missiles"+missiles.size(),10,20);
+            g.drawString("Explosions"+explosions.size(),10,40);
+            g.drawString("platerTank HP"+playerTank.getHp(),10,60);
+            g.drawString("Enemy left"+enemyTanks.size(),10,80);
+            g.drawString("Enemy Killed"+enemykilled.get(),10,100);
+
+
         playerTank.draw(g);
 
+        int count = enemyTanks.size();
+
         enemyTanks.removeIf(t->!t.isLive());
+        enemykilled.addAndGet(count-enemyTanks.size());
         if(enemyTanks.isEmpty()){
             this.initEnemyTanks();
         }
@@ -148,17 +163,19 @@ public class gameclient extends JComponent {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         while(true){
+            try{
             client.repaint();
             if(client.getPlayerTank().isLive()){
             for(Tank tank :client.enemyTanks){
                 tank.actRandomly();
             }
-            try{
+            }
+
                 Thread.sleep(50);
             }catch(Exception e){
                 e.printStackTrace();}
             }
-        }
+
     }
 
     public void restart() {
