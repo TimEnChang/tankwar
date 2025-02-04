@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.util.Random;
 
 public class Tank {
     private int x;
@@ -71,10 +72,9 @@ public class Tank {
     }
 
     void draw(Graphics g){
-
-
         int oldX =x, oldY = y;
-        this.determineDirection();
+        if(!this.enemy){
+        this.determineDirection();}
         this.move();
 
         if(x<0) x=0;
@@ -93,12 +93,25 @@ public class Tank {
         }
 
         for(Tank tank:gameclient.getInstance().getEnemyTanks()){
-            if(rec.intersects(tank.getRectangle())){
+            if(tank != this && rec.intersects(tank.getRectangle())){
                 x = oldX;
                 y = oldY;
                 break;
 
             }
+        }
+        if(this.enemy && rec.intersects(gameclient.getInstance().getPlayerTank().getRectangle())) {
+            x = oldX;
+            y = oldY;
+
+        }
+
+        if(!enemy){
+            g.setColor(Color.WHITE);
+            g.drawRect(x,y-10,this.getImage().getWidth(null),10);
+            g.setColor(Color.RED);
+            int width = hp*getImage().getWidth(null)/100;
+            g.fillRect(x,y-10,width,10);
 
         }
 
@@ -121,6 +134,7 @@ public class Tank {
             case KeyEvent.VK_RIGHT: right = true; break;
             case KeyEvent.VK_SPACE:fire(); break;
             case KeyEvent.VK_A:superfire(); break;
+            case KeyEvent.VK_ENTER:gameclient.getInstance().restart(); break;
 
         }
 
@@ -168,5 +182,19 @@ public class Tank {
             case KeyEvent.VK_RIGHT: right = false; break;
         }
 
+    }
+    private  final Random random = new Random();
+
+    private int step =random.nextInt(12)+3;
+    public void actRandomly() {
+        Direction[] dir = Direction.values();
+    if(step==0){
+        step = new Random().nextInt(12)+3;
+        this.direction = dir[new Random().nextInt(dir.length)];
+        if(  random.nextBoolean() ){
+            this.fire();
+        }
+    }
+        step--;
     }
 }

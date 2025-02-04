@@ -7,6 +7,10 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import static java.awt.Font.BOLD;
+import static java.awt.font.TextAttribute.FONT;
 
 public class gameclient extends JComponent {
 
@@ -16,7 +20,7 @@ public class gameclient extends JComponent {
         return  INSTANCE;
     }
 
-    private final Tank playerTank;
+    private Tank playerTank;
 
     private List<Tank> enemyTanks;
 
@@ -38,7 +42,7 @@ public class gameclient extends JComponent {
         explosions.add(explosion);
     }
 
-    synchronized void add(Missile missile){
+     void add(Missile missile){
        missiles.add(missile);}
 
     void removeMissile(Missile missile){
@@ -57,7 +61,7 @@ public class gameclient extends JComponent {
         this.enemyTanks = enemyTanks;
         this.playerTank = new Tank(375,20,false,Direction.Down);
 
-        this.missiles = new ArrayList<>();
+        this.missiles = new CopyOnWriteArrayList<>();
         this.explosions = new ArrayList<>();
         this.Walls = Arrays.asList(
                 new Wall(200,120,true,15),
@@ -85,6 +89,13 @@ public class gameclient extends JComponent {
     @Override protected void paintComponent(Graphics g) {
         g.setColor(Color.black);
         g.fillRect(0, 0, 800, 600);
+        if(!playerTank.isLive()){
+            g.setColor(Color.red);
+            g.setFont(new Font(null,Font.BOLD,100));
+            g.drawString("GAME OVER",100,200);
+            g.setFont(new Font(null,Font.BOLD,60));
+            g.drawString("Press ENTER to restart",60,400);
+        }else{
         playerTank.draw(g);
 
         enemyTanks.removeIf(t->!t.isLive());
@@ -97,6 +108,8 @@ public class gameclient extends JComponent {
         for(Wall wall:Walls){
             wall.draw(g);
         }
+
+
         missiles.removeIf(m->!m.isLive());
         for(Missile missile:missiles){
             missile.draw(g);
@@ -105,7 +118,7 @@ public class gameclient extends JComponent {
         explosions.removeIf(e->!e.isLive());
         for(Explosion explosion:explosions){
             explosion.draw(g);
-        }
+        }}
 
     }
 
@@ -131,17 +144,29 @@ public class gameclient extends JComponent {
                 client.playerTank.keyReleased(e);
             }
 
-
         });
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         while(true){
             client.repaint();
+            if(client.getPlayerTank().isLive()){
+            for(Tank tank :client.enemyTanks){
+                tank.actRandomly();
+            }
             try{
                 Thread.sleep(50);
             }catch(Exception e){
-                e.printStackTrace();
+                e.printStackTrace();}
             }
         }
     }
+
+    public void restart() {
+        if(!playerTank.isLive()){
+            playerTank = new Tank(375,20,Direction.Down);
+
+        }
+        this.initEnemyTanks();
+    }
+
 }
